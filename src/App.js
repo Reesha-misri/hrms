@@ -104,44 +104,43 @@ useEffect(() => {
     }
 
     try {
+      let res;
       if (editId) {
-        const res = await fetch(`http://localhost:3001/update-employee/${editId}`, {
+        res = await fetch(`http://localhost:3001/update-employee/${editId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData)
         });
-
-        const message = await res.text();
-        alert(message);
-        setEditId(null);
       } else {
-        const res = await fetch("http://localhost:3001/add-employee", {
+        res = await fetch("http://localhost:3001/add-employee", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData)
         });
-      
-        const message = await res.text();
-        alert(message);
       }
 
-      setFormData({
-        employee_id: "",
-        full_name: "",
-        email: "",
-        password: "",
-        department_name: "",
-        designation_id: "",
-        manager_id: "",
-        role_id: "",
-        communication_address: "",
-        permanent_address: "",
-        basic: "",       // new
-        allowance: "",
-        deduction: ""
-      });
+      const message = await res.text();
+      alert(message);
 
-      await fetchEmployees();
+      if (res.ok) {
+        setEditId(null);
+        setFormData({
+          employee_id: "",
+          full_name: "",
+          email: "",
+          password: "",
+          department_name: "",
+          designation_id: "",
+          manager_id: "",
+          role_id: "",
+          communication_address: "",
+          permanent_address: "",
+          basic: "",
+          allowance: "",
+          deduction: ""
+        });
+        await fetchEmployees();
+      }
     } catch (err) {
       console.error(err);
       alert("Error saving employee");
@@ -209,7 +208,7 @@ useEffect(() => {
         <>
           <h2>{editId ? "Update Employee" : "Add Employee"}</h2>
           <form onSubmit={handleSubmit}>
-            <input type="text" name="employee_id" placeholder="Employee ID" value={formData.employee_id} onChange={handleChange} />
+            <input type="text" name="employee_id" placeholder="Employee ID" value={formData.employee_id} onChange={handleChange} readOnly={!!editId} style={{ backgroundColor: editId ? "#eee" : "white" }} />
             <input type="text" name="full_name" placeholder="Full Name" value={formData.full_name} onChange={handleChange} />
             <input type="number" name="basic" placeholder="Basic Salary" value={formData.basic} onChange={handleChange} />
             <input type="number" name="allowance" placeholder="Allowance" value={formData.allowance} onChange={handleChange} />

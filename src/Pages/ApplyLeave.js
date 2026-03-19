@@ -61,7 +61,7 @@ function ApplyLeave() {
       });
   
       // ✅ Optional: update leave request table immediately
-      fetchLeaveRequests(); // You should define this function in parent to refresh leave table
+      // fetchLeaveRequests(); // Function not defined, removed to fix "success then error" bug
     } catch (err) {
       console.error(err);
       alert("Error applying leave");
