@@ -66,7 +66,7 @@ Filter
 <tr key={a.attendance_id}>
 
 <td>{a.attendance_id}</td>
-<td>{a.employee_id}</td>
+<td>{a.full_name} ({a.employee_id})</td>
 <td>{a.check_in ? a.check_in : "-"}</td>
 <td>{a.check_out ? a.check_out : "-"}</td>
 

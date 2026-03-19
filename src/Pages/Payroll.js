@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 
-function Payroll(){
+function Payroll({ canGenerate }){
 
 const [employeeId,setEmployeeId] = useState("");
 const [month,setMonth] = useState("");
 const [message,setMessage] = useState("");
 const [payroll,setPayroll] = useState([]);
+
+const role = localStorage.getItem("role");
+const loggedInEmpId = localStorage.getItem("employee_id");
 
 const generatePayroll = async () => {
 
@@ -30,7 +33,7 @@ fetchPayroll(); // refresh table
 
 const fetchPayroll = async ()=>{
 
-const res = await fetch("http://localhost:3001/payroll");
+const res = await fetch(`http://localhost:3001/payroll?role=${role}&employee_id=${loggedInEmpId}`);
 const data = await res.json();
 
 setPayroll(data);
@@ -45,31 +48,35 @@ return(
 
 <div style={{marginTop:"30px"}}>
 
-<h2>Generate Payroll</h2>
+  {canGenerate && (
+    <>
+      <h2>Generate Payroll</h2>
 
-<input
-type="number"
-placeholder="Employee ID"
-value={employeeId}
-onChange={(e)=>setEmployeeId(e.target.value)}
-/>
+      <input
+        type="number"
+        placeholder="Employee ID"
+        value={employeeId}
+        onChange={(e)=>setEmployeeId(e.target.value)}
+      />
 
-<br/><br/>
+      <br/><br/>
 
-<input
-type="text"
-placeholder="Month"
-value={month}
-onChange={(e)=>setMonth(e.target.value)}
-/>
+      <input
+        type="text"
+        placeholder="Month"
+        value={month}
+        onChange={(e)=>setMonth(e.target.value)}
+      />
 
-<br/><br/>
+      <br/><br/>
 
-<button onClick={generatePayroll}>
-Generate Payroll
-</button>
+      <button onClick={generatePayroll}>
+        Generate Payroll
+      </button>
 
-<p>{message}</p>
+      <p>{message}</p>
+    </>
+  )}
 
 <h2>Payroll Records</h2>
 

@@ -13,6 +13,8 @@ setLeaves(data);
 
 };
 
+const loggedInEmployeeId = localStorage.getItem("employee_id");
+
 useEffect(()=>{
 fetchLeaves();
 },[]);
@@ -21,7 +23,9 @@ fetchLeaves();
 const approveLeave = async(id)=>{
 
 await fetch(`http://localhost:3001/approve-leave/${id}`,{
-method:"PUT"
+method:"PUT",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ approver_id: loggedInEmployeeId })
 });
 
 fetchLeaves();
@@ -31,7 +35,9 @@ fetchLeaves();
 const rejectLeave = async(id)=>{
 
 await fetch(`http://localhost:3001/reject-leave/${id}`,{
-method:"PUT"
+method:"PUT",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ approver_id: loggedInEmployeeId })
 });
 
 fetchLeaves();
@@ -75,13 +81,13 @@ return(
 <td>{l.status}</td>
 
 <td>
-{l.status === "Pending" && (
+{l.status === "Pending" && Number(l.employee_id) !== Number(loggedInEmployeeId) && (
 <button onClick={() => approveLeave(l.leave_id)}>Approve</button>
 )}
 </td>
 
 <td>
-{l.status === "Pending" && (
+{l.status === "Pending" && Number(l.employee_id) !== Number(loggedInEmployeeId) && (
 <button onClick={() => rejectLeave(l.leave_id)}>Reject</button>
 )}
 </td>

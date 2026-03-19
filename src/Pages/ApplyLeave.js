@@ -84,7 +84,8 @@ function ApplyLeave() {
           name="employee_id"
           placeholder="Employee ID"
           value={formData.employee_id}
-          onChange={handleChange}
+          readOnly
+          style={{ backgroundColor: "#eee" }}
         />
 
         <select name="leave_type" value={formData.leave_type} onChange={handleChange}>
