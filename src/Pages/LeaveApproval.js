@@ -1,108 +1,92 @@
 import { useEffect, useState } from "react";
+import "./LeaveApproval.css";
 
 function LeaveApproval(){
+  const [leaves,setLeaves] = useState([]);
+  const loggedInEmployeeId = localStorage.getItem("employee_id");
 
-const [leaves,setLeaves] = useState([]);
+  const fetchLeaves = async () => {
+    const res = await fetch("http://localhost:3001/leaves");
+    const data = await res.json();
+    setLeaves(data);
+  };
 
-const fetchLeaves = async () => {
+  useEffect(()=>{
+    fetchLeaves();
+  }, []);
 
-const res = await fetch("http://localhost:3001/leaves");
-const data = await res.json();
+  const approveLeave = async(id)=>{
+    await fetch(`http://localhost:3001/approve-leave/${id}`,{
+      method:"PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ approver_id: loggedInEmployeeId })
+    });
+    fetchLeaves();
+  };
 
-setLeaves(data);
+  const rejectLeave = async(id)=>{
+    await fetch(`http://localhost:3001/reject-leave/${id}`,{
+      method:"PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ approver_id: loggedInEmployeeId })
+    });
+    fetchLeaves();
+  };
 
-};
-
-const loggedInEmployeeId = localStorage.getItem("employee_id");
-
-useEffect(()=>{
-fetchLeaves();
-},[]);
-
-
-const approveLeave = async(id)=>{
-
-await fetch(`http://localhost:3001/approve-leave/${id}`,{
-method:"PUT",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({ approver_id: loggedInEmployeeId })
-});
-
-fetchLeaves();
-
-};
-
-const rejectLeave = async(id)=>{
-
-await fetch(`http://localhost:3001/reject-leave/${id}`,{
-method:"PUT",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({ approver_id: loggedInEmployeeId })
-});
-
-fetchLeaves();
-
-};
-
-
-return(
-
-<div style={{padding:"20px"}}>
-
-<h2>Leave Requests</h2>
-
-<table border="1" cellPadding="10">
-
-<thead>
-
-<tr>
-<th>ID</th>
-<th>Employee</th>
-<th>Leave Type</th>
-<th>Start</th>
-<th>End</th>
-<th>Status</th>
-<th>Approve</th>
-<th>Reject</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-{leaves.map((l)=>(
-<tr key={l.leave_id}>
-
-<td>{l.leave_id}</td>
-<td>{l.full_name}</td>
-<td>{l.leave_type}</td>
-<td>{new Date(l.start_date).toLocaleDateString()}</td>
-<td>{new Date(l.end_date).toLocaleDateString()}</td>
-<td>{l.status}</td>
-
-<td>
-{l.status === "Pending" && Number(l.employee_id) !== Number(loggedInEmployeeId) && (
-<button onClick={() => approveLeave(l.leave_id)}>Approve</button>
-)}
-</td>
-
-<td>
-{l.status === "Pending" && Number(l.employee_id) !== Number(loggedInEmployeeId) && (
-<button onClick={() => rejectLeave(l.leave_id)}>Reject</button>
-)}
-</td>
-
-</tr>
-))}
-
-</tbody>
-
-</table>
-
-</div>
-
-);
-
+  return(
+    <div className="approval-container">
+      <div className="attendance-card">
+        <h2 className="payroll-title" style={{ marginBottom: "24px" }}>Leave Requests for Approval</h2>
+        <div className="payroll-table-container">
+          <table className="attendance-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Leave Type</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {leaves.map((l)=>(
+                <tr key={l.leave_id}>
+                  <td>
+                    <div style={{ fontWeight: "600", color: "#1e293b" }}>{l.full_name}</div>
+                    <div style={{ fontSize: "12px", color: "#64748b" }}>ID: {l.employee_id}</div>
+                  </td>
+                  <td>
+                    <span style={{ padding: "4px 8px", background: "#f1f5f9", borderRadius: "4px", fontSize: "13px" }}>
+                      {l.leave_type}
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ fontSize: "14px" }}>{new Date(l.start_date).toLocaleDateString()}</div>
+                    <div style={{ color: "#94a3b8", fontSize: "12px" }}>to {new Date(l.end_date).toLocaleDateString()}</div>
+                  </td>
+                  <td>
+                    <span className={`status-badge ${l.status === 'Approved' ? 'status-present' : l.status === 'Rejected' ? 'status-absent' : 'status-present'}`} style={{ background: l.status === 'Pending' ? '#fef9c3' : '', color: l.status === 'Pending' ? '#854d0e' : '' }}>
+                      {l.status}
+                    </span>
+                  </td>
+                  <td>
+                    {l.status === "Pending" && Number(l.employee_id) !== Number(loggedInEmployeeId) ? (
+                      <div className="action-buttons">
+                        <button className="approve-btn" onClick={() => approveLeave(l.leave_id)}>Approve</button>
+                        <button className="reject-btn" onClick={() => rejectLeave(l.leave_id)}>Reject</button>
+                      </div>
+                    ) : (
+                      <span style={{ color: "#94a3b8", fontSize: "13px" }}>None</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default LeaveApproval;

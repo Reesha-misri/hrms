@@ -8,6 +8,9 @@ import Payroll from "./Pages/Payroll";
 import Profile from "./Pages/Profile";
 import MyAttendance from "./Pages/MyAttendance";
 import AuditLogs from "./Pages/AuditLogs";
+import ForgotPassword from "./Pages/ForgotPassword";
+import "./App.css";
+import { LayoutDashboard, Users, Calendar, FileText, LogOut, Plus, X } from "lucide-react";
 
 function App() {
   const navigate = useNavigate();
@@ -32,6 +35,11 @@ function App() {
     deduction: ""
   });
   const [editId, setEditId] = useState(null);
+  const [showNewDesignation, setShowNewDesignation] = useState(false);
+  const [showNewRole, setShowNewRole] = useState(false);
+  const [newDesignation, setNewDesignation] = useState("");
+  const [newRole, setNewRole] = useState("");
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   // Role & permissions from localStorage
   const role = localStorage.getItem("role");
@@ -41,10 +49,10 @@ function App() {
   // Derived permissions
   const canManageEmployees = permissions.some(p => p.permission_name === "Manage Employees");
   const canApproveLeave = permissions.some(p => p.permission_name === "Approve Leave");
-  const canViewPayroll = permissions.some(p => p.permission_name === "View Payroll");
-  const canGeneratePayroll = permissions.some(p => p.permission_name === "Generate Payroll");
+  const canViewPayroll = permissions.some(p => p.permission_name === "View Payroll") || role === "HR" || role === "Admin";
+  const canGeneratePayroll = permissions.some(p => p.permission_name === "Generate Payroll") || role === "HR" || role === "Admin";
   const canApplyLeave = permissions.some(p => p.permission_name === "Apply Leave");
-  const canViewAttendance = permissions.some(p => p.permission_name === "View Attendance");
+  const canViewAttendance = permissions.some(p => p.permission_name === "View Attendance") || role === "Manager" || role === "HR" || role === "Admin";
 
   // Fetch functions
   const fetchEmployees = useCallback(async () => {
@@ -90,28 +98,92 @@ function App() {
     }
   }, [fetchEmployees, fetchDesignations, fetchRoles, employeeId, fetchLeaveRequests, role]);
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "designation_id" && value === "ADD_NEW") {
+      setShowNewDesignation(true);
+    } else if (name === "role_id" && value === "ADD_NEW") {
+      setShowNewRole(true);
+    } else {
+      if (name === "designation_id") setShowNewDesignation(false);
+      if (name === "role_id") setShowNewRole(false);
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const resetForm = () => {
+    setEditId(null);
+    setIsFormVisible(false);
+    setShowNewDesignation(false);
+    setShowNewRole(false);
+    setNewDesignation("");
+    setNewRole("");
+    setFormData({
+      employee_id: "",
+      full_name: "",
+      email: "",
+      password: "",
+      department_name: "",
+      designation_id: "",
+      manager_id: "",
+      role_id: "",
+      communication_address: "",
+      permanent_address: "",
+      basic: "",
+      allowance: "",
+      deduction: ""
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.employee_id || !formData.full_name || !formData.email || !formData.department_name || !formData.designation_id || !formData.role_id) {
+    
+    // Correctly validate Designation and Role when ADD_NEW is used
+    const isDesignationValid = showNewDesignation ? !!newDesignation : !!formData.designation_id;
+    const isRoleValid = showNewRole ? !!newRole : !!formData.role_id;
+
+    if (!formData.employee_id || !formData.full_name || !formData.email || !formData.department_name || !isDesignationValid || !isRoleValid) {
       alert("Please fill all mandatory fields");
       return;
     }
 
     try {
+      let finalFormData = { ...formData };
+
+      // Add new designation if needed
+      if (showNewDesignation && newDesignation) {
+        const dRes = await fetch("http://localhost:3001/add-designation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ designation_title: newDesignation })
+        });
+        const dData = await dRes.json();
+        finalFormData.designation_id = dData.designation_id;
+      }
+
+      // Add new role if needed
+      if (showNewRole && newRole) {
+        const rRes = await fetch("http://localhost:3001/add-role", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ role_name: newRole })
+        });
+        const rData = await rRes.json();
+        finalFormData.role_id = rData.role_id;
+      }
+
       let res;
       if (editId) {
         res = await fetch(`http://localhost:3001/update-employee/${editId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(finalFormData)
         });
       } else {
         res = await fetch("http://localhost:3001/add-employee", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(finalFormData)
         });
       }
 
@@ -119,23 +191,10 @@ function App() {
       alert(message);
 
       if (res.ok) {
-        setEditId(null);
-        setFormData({
-          employee_id: "",
-          full_name: "",
-          email: "",
-          password: "",
-          department_name: "",
-          designation_id: "",
-          manager_id: "",
-          role_id: "",
-          communication_address: "",
-          permanent_address: "",
-          basic: "",
-          allowance: "",
-          deduction: ""
-        });
+        resetForm();
         await fetchEmployees();
+        await fetchDesignations();
+        await fetchRoles();
       }
     } catch (err) {
       console.error(err);
@@ -160,117 +219,173 @@ function App() {
       allowance: emp.allowance || "",
       deduction: emp.deduction || ""
     });
+    setIsFormVisible(true);
   };
 
   const deleteEmployee = async (id) => {
-    await fetch(`http://localhost:3001/delete-employee/${id}`, { method: "DELETE" });
-    fetchEmployees();
+    if (window.confirm("Are you sure you want to delete this employee?")) {
+      await fetch(`http://localhost:3001/delete-employee/${id}`, { method: "DELETE" });
+      fetchEmployees();
+    }
   };
 
-  // Show login if not logged in
-  if (!role) return <Login />;
-
-  const navLinkStyle = ({ isActive }) => ({
-    padding: "10px 15px",
-    marginRight: "10px",
-    textDecoration: "none",
-    color: isActive ? "white" : "black",
-    background: isActive ? "#007bff" : "#eee",
-    borderRadius: "4px",
-    display: "inline-block"
-  });
+  // Show login/forgot-password if not logged in
+  if (!role) {
+    return (
+      <Routes>
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="*" element={<Login />} />
+      </Routes>
+    );
+  }
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial", backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
-      {/* Navigation */}
-      <div style={{ background: "white", padding: "20px", borderRadius: "8px", marginBottom: "30px" }}>
-        <NavLink to="/profile" style={navLinkStyle}>My Profile</NavLink>
-        <NavLink to="/myattendance" style={navLinkStyle}>My Attendance</NavLink>
-        <NavLink to="/audit-logs" style={navLinkStyle}>Audit Trail</NavLink>
-        {canApproveLeave && <NavLink to="/leave-requests" style={navLinkStyle}>View Leave Requests</NavLink>}
-        {canApplyLeave && <NavLink to="/apply-leave" style={navLinkStyle}>Apply Leave</NavLink>}
-        {canViewAttendance && <NavLink to="/attendance" style={navLinkStyle}>View Attendance</NavLink>}
-        {canViewPayroll && <NavLink to="/payroll" style={navLinkStyle}>Payroll</NavLink>}
-        {canManageEmployees && <NavLink to="/employees" style={navLinkStyle}>Employee Management</NavLink>}
-        <button 
-          onClick={() => { localStorage.clear(); window.location.href = "/"; }}
-          style={{ padding: "10px 15px", marginLeft: "10px", background: "#f8f9fa", border: "1px solid #ccc", borderRadius: "4px", cursor: "pointer" }}
+    <div className="app-container">
+      {/* Sidebar - ORIGINAL DESIGN */}
+      <div className="sidebar">
+        <h2>HRMS</h2>
+        <NavLink to="/profile"><LayoutDashboard size={16}/> Profile</NavLink>
+        <NavLink to="/myattendance"><Calendar size={16}/> Attendance</NavLink>
+        <NavLink to="/audit-logs"><FileText size={16}/> Audit</NavLink>
+
+        {canApproveLeave && <NavLink to="/leave-requests">Leave Requests</NavLink>}
+        {canApplyLeave && <NavLink to="/apply-leave">Apply Leave</NavLink>}
+        
+        {/* ATTENDANCE FOR MANAGERS/HR/ADMIN */}
+        {(role === "Manager" || role === "HR" || role === "Admin") && (
+          <NavLink to="/attendance">
+            <Users size={16}/> {role === "Manager" ? "Team Attendance" : "All Attendance"}
+          </NavLink>
+        )}
+
+        {canViewPayroll && <NavLink to="/payroll">Payroll</NavLink>}
+        {canManageEmployees && <NavLink to="/employees"><Users size={16}/> Employees</NavLink>}
+
+        <button
+          className="logout-btn"
+          onClick={() => {
+            localStorage.clear();
+            window.location.href = "/";
+          }}
         >
-          Logout
+          <LogOut size={16}/> Logout
         </button>
       </div>
 
-      <Routes>
-        <Route path="/employees" element={
-          canManageEmployees ? (
-            <>
-              <h2>{editId ? "Update Employee" : "Add Employee"}</h2>
-              <form onSubmit={handleSubmit}>
-                <input type="text" name="employee_id" placeholder="Employee ID" value={formData.employee_id} onChange={handleChange} readOnly={!!editId} style={{ backgroundColor: editId ? "#eee" : "white" }} />
-                <input type="text" name="full_name" placeholder="Full Name" value={formData.full_name} onChange={handleChange} />
-                <input type="number" name="basic" placeholder="Basic Salary" value={formData.basic} onChange={handleChange} />
-                <input type="number" name="allowance" placeholder="Allowance" value={formData.allowance} onChange={handleChange} />
-                <input type="number" name="deduction" placeholder="Deduction" value={formData.deduction} onChange={handleChange} />
-                <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
-                <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
-                <input type="text" name="department_name" placeholder="Department" value={formData.department_name} onChange={handleChange} />
-                <select name="designation_id" value={formData.designation_id} onChange={handleChange}>
-                  <option value="">Select Designation</option>
-                  {designations.map(d => <option key={d.designation_id} value={d.designation_id}>{d.designation_title}</option>)}
-                </select>
-                <select name="role_id" value={formData.role_id} onChange={handleChange}>
-                  <option value="">Select Role</option>
-                  {roles.map(r => <option key={r.role_id} value={r.role_id}>{r.role_name}</option>)}
-                </select>
-                <select name="manager_id" value={formData.manager_id} onChange={handleChange}>
-                  <option value="">Select Manager</option>
-                  {employees.filter(e => e.role_name === "Manager").map(m => <option key={m.employee_id} value={m.employee_id}>{m.full_name}</option>)}
-                </select>
-                <textarea name="communication_address" placeholder="Communication Address" value={formData.communication_address} onChange={handleChange}></textarea>
-                <textarea name="permanent_address" placeholder="Permanent Address" value={formData.permanent_address} onChange={handleChange}></textarea>
-                <button type="submit">{editId ? "Update" : "Add"}</button>
-              </form>
+      <div className="main-content">
+        <div className="topbar">
+          Welcome, {role} 👋
+        </div>
 
-              <h2>Employee List</h2>
-              <table border="1" cellPadding="8" style={{ width: "100%", background: "white" }}>
-                <thead>
-                  <tr>
-                    <th>ID</th><th>Name</th><th>Email</th><th>Dept</th><th>Designation</th><th>Role</th><th>Manager</th><th>Basic</th><th>Allowance</th><th>Deduction</th><th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employees.map(emp => (
-                    <tr key={emp.employee_id}>
-                      <td>{emp.employee_id}</td>
-                      <td>{emp.full_name}</td>
-                      <td>{emp.email}</td>
-                      <td>{emp.department_name}</td>
-                      <td>{emp.designation_title}</td>
-                      <td>{emp.role_name}</td>
-                      <td>{emp.manager_name || "-"}</td>
-                      <td>{emp.basic || 0}</td>
-                      <td>{emp.allowance || 0}</td>
-                      <td>{emp.deduction || 0}</td>
-                      <td>
-                        <button onClick={() => editEmployee(emp)}>Edit</button>
-                        <button onClick={() => deleteEmployee(emp.employee_id)}>Delete</button>
-                      </td>
+        <Routes>
+          {/* EMPLOYEE PAGE */}
+          <Route path="/employees" element={
+            canManageEmployees ? (
+              <div className="card">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                  <h2 style={{ margin: 0 }}>Employee Management</h2>
+                  <button className="primary-btn" style={{ display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setIsFormVisible(!isFormVisible)}>
+                    {isFormVisible ? <X size={16} /> : <Plus size={16} />}
+                    {isFormVisible ? "Close Form" : "Add Employee"}
+                  </button>
+                </div>
+
+                <div className={`form-container ${isFormVisible ? "" : "hidden"}`}>
+                  <h3>{editId ? "Update Employee" : "Add New Employee"}</h3>
+                  <form className="form-grid" onSubmit={handleSubmit}>
+                    <input name="employee_id" placeholder="Employee ID" value={formData.employee_id} onChange={handleChange} readOnly={!!editId} />
+                    <input name="full_name" placeholder="Full Name" value={formData.full_name} onChange={handleChange} />
+                    <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
+                    <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
+                    <input name="department_name" placeholder="Department" value={formData.department_name} onChange={handleChange} />
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                      <select name="designation_id" value={formData.designation_id} onChange={handleChange}>
+                        <option value="">Designation</option>
+                        {designations.map(d => <option key={d.designation_id} value={d.designation_id}>{d.designation_title}</option>)}
+                        <option value="ADD_NEW">+ Add New Designation</option>
+                      </select>
+                      {showNewDesignation && (
+                        <input placeholder="New Designation Name" value={newDesignation} onChange={(e) => setNewDesignation(e.target.value)} />
+                      )}
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                      <select name="role_id" value={formData.role_id} onChange={handleChange}>
+                        <option value="">Role</option>
+                        {roles.map(r => <option key={r.role_id} value={r.role_id}>{r.role_name}</option>)}
+                        <option value="ADD_NEW">+ Add New Role</option>
+                      </select>
+                      {showNewRole && (
+                        <input placeholder="New Role Name" value={newRole} onChange={(e) => setNewRole(e.target.value)} />
+                      )}
+                    </div>
+
+                    <select name="manager_id" value={formData.manager_id} onChange={handleChange}>
+                      <option value="">Manager</option>
+                      {employees.filter(e => e.role_name === "Manager").map(m => (
+                        <option key={m.employee_id} value={m.employee_id}>{m.full_name}</option>
+                      ))}
+                    </select>
+
+                    <input type="text" name="basic" placeholder="Basic" value={formData.basic} onChange={handleChange} />
+                    <input type="text" name="allowance" placeholder="Allowance" value={formData.allowance} onChange={handleChange} />
+                    <input type="text" name="deduction" placeholder="Deduction" value={formData.deduction} onChange={handleChange} />
+
+                    <textarea name="communication_address" placeholder="Communication Address" value={formData.communication_address} onChange={handleChange} style={{ gridColumn: "span 3" }}></textarea>
+                    <textarea name="permanent_address" placeholder="Permanent Address" value={formData.permanent_address} onChange={handleChange} style={{ gridColumn: "span 3" }}></textarea>
+
+                    <div style={{ gridColumn: "span 3", display: "flex", gap: "10px" }}>
+                      <button type="submit" className="primary-btn" style={{ flex: 1 }}>
+                        {editId ? "Update Employee" : "Save Employee"}
+                      </button>
+                      <button type="button" className="primary-btn" style={{ background: "#6c757d" }} onClick={resetForm}>Cancel</button>
+                    </div>
+                  </form>
+                </div>
+
+                <h3>Employee List</h3>
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>ID</th><th>Name</th><th>Email</th><th>Dept</th><th>Role</th><th>Basic</th><th>Allowance</th><th>Deduction</th><th>Total</th><th>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          ) : <Navigate to="/profile" />
-        } />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/myattendance" element={<MyAttendance />} />
-        <Route path="/audit-logs" element={<AuditLogs />} />
-        <Route path="/leave-requests" element={canApproveLeave ? <LeaveApproval /> : <Navigate to="/profile" />} />
-        <Route path="/apply-leave" element={canApplyLeave ? <ApplyLeave fetchLeaveRequests={fetchLeaveRequests} /> : <Navigate to="/profile" />} />
-        <Route path="/attendance" element={canViewAttendance ? <Attendance /> : <Navigate to="/profile" />} />
-        <Route path="/payroll" element={canViewPayroll ? <Payroll canGenerate={canGeneratePayroll} /> : <Navigate to="/profile" />} />
-        <Route path="/" element={<Navigate to={canManageEmployees ? "/employees" : "/profile"} />} />
-      </Routes>
+                  </thead>
+                  <tbody>
+                    {employees.map(emp => (
+                      <tr key={emp.employee_id}>
+                        <td>{emp.employee_id}</td>
+                        <td style={{ fontWeight: 600 }}>{emp.full_name}</td>
+                        <td>{emp.email}</td>
+                        <td>{emp.department_name}</td>
+                        <td>{emp.role_name}</td>
+                        <td>{emp.basic}</td>
+                        <td>{emp.allowance}</td>
+                        <td>{emp.deduction}</td>
+                        <td style={{ color: "#28a745", fontWeight: 700 }}>₹{(Number(emp.basic)||0) + (Number(emp.allowance)||0) - (Number(emp.deduction)||0)}</td>
+                        <td>
+                          <button className="action-btn edit-btn" onClick={() => editEmployee(emp)}>Edit</button>
+                          <button className="action-btn delete-btn" onClick={() => deleteEmployee(emp.employee_id)}>Delete</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : <Navigate to="/profile" />
+          } />
+
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/myattendance" element={<MyAttendance />} />
+          <Route path="/audit-logs" element={<AuditLogs />} />
+          <Route path="/leave-requests" element={canApproveLeave ? <LeaveApproval /> : <Navigate to="/profile" />} />
+          <Route path="/apply-leave" element={canApplyLeave ? <ApplyLeave fetchLeaveRequests={fetchLeaveRequests} /> : <Navigate to="/profile" />} />
+          <Route path="/attendance" element={canViewAttendance ? <Attendance /> : <Navigate to="/profile" />} />
+          <Route path="/payroll" element={canViewPayroll ? <Payroll canGenerate={canGeneratePayroll} /> : <Navigate to="/profile" />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/" element={<Navigate to={canManageEmployees ? "/employees" : "/profile"} />} />
+        </Routes>
+      </div>
     </div>
   );
 }

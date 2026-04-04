@@ -1,0 +1,43 @@
+/* AuditLogs.css */
+.audit-container {
+    padding: 24px;
+}
+
+.audit-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.audit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.audit-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 8px;
+    gap: 20px;
+}
+
+.audit-time {
+    color: #94a3b8;
+    font-size: 12px;
+    min-width: 150px;
+}
+
+.audit-action {
+    font-weight: 600;
+    color: #334155;
+    flex: 1;
+}
+
+.audit-user {
+    color: #64748b;
+    font-size: 14px;
+}

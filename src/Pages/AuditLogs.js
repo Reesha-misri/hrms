@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import "./AuditLogs.css";
 
 function AuditLogs() {
-
   const [logs,setLogs] = useState([]);
 
   useEffect(()=>{
@@ -15,34 +15,26 @@ function AuditLogs() {
   };
 
   return(
-    <div style={{marginTop:"30px"}}>
-      <h2>Audit Trail</h2>
-
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Log ID</th>
-            <th>Employee</th>
-            <th>Action</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
+    <div className="audit-container">
+      <div className="audit-card">
+        <h2 className="attendance-title" style={{ marginBottom: "24px" }}>System Audit Trail</h2>
+        <div className="audit-list">
           {logs.map((log)=>(
-            <tr key={log.log_id}>
-              <td>{log.log_id}</td>
-              <td>{log.full_name}</td>
-              <td>{log.action}</td>
-              <td>{log.log_time}</td>
-            </tr>
+            <div key={log.log_id} className="audit-item">
+              <div className="audit-time">
+                {new Date(log.log_time).toLocaleString()}
+              </div>
+              <div className="audit-action">
+                {log.action}
+              </div>
+              <div className="audit-user">
+                Performed by: <b>{log.full_name || 'System'}</b>
+                <span style={{ marginLeft: "10px", fontSize: "12px" }}>(ID: {log.employee_id})</span>
+              </div>
+            </div>
           ))}
-
-        </tbody>
-
-      </table>
-
+        </div>
+      </div>
     </div>
   );
 }

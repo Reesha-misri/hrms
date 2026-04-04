@@ -1,9 +1,14 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import "./Login.css";
+import { Eye, EyeOff } from "lucide-react";
 
 function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+    const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -43,28 +48,48 @@ localStorage.setItem("permissions", JSON.stringify(data.permissions));
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "100px auto", padding: "20px", background: "#fff", borderRadius: "8px" }}>
-      <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+  <div className="login-container">
+    <div className="login-card">
+      <h2 className="login-title">Welcome Back 👋</h2>
+      <p className="login-subtitle">Login to your account</p>
+
+      {error && <p className="login-error">{error}</p>}
+
       <form onSubmit={handleLogin}>
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+          className="login-input"
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
-        <button type="submit" style={{ width: "100%", padding: "10px" }}>Login</button>
+
+        <div className="password-wrapper">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    className="login-input"
+  />
+
+  <span
+    className="toggle-password"
+    onClick={() => setShowPassword(!showPassword)}
+  >
+{showPassword ? <Eye size={18} /> : <EyeOff size={18} />}  </span>
+</div>
+
+        <button type="submit" className="login-button">
+          Login
+        </button>
       </form>
+      <div className="login-footer">
+        <Link to="/forgot-password" style={{ color: "#007bff", textDecoration: "none", fontSize: "14px" }}>Forgot Password?</Link>
+      </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default Login;

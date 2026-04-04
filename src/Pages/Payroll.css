@@ -1,0 +1,114 @@
+/* Payroll.css */
+.payroll-container {
+    padding: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.payroll-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.payroll-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 24px;
+    border-left: 4px solid #3b82f6;
+    padding-left: 15px;
+}
+
+.payroll-form {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.payroll-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 16px;
+    border: 2px solid #f1f5f9;
+    border-radius: 10px;
+    background: #f8fafc;
+    transition: all 0.3s;
+}
+
+.payroll-input:focus {
+    border-color: #3b82f6;
+    background: white;
+    outline: none;
+}
+
+.payroll-btn {
+    padding: 12px 24px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.payroll-btn:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.payroll-table-container {
+    overflow-x: auto;
+}
+
+.payroll-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.payroll-table th {
+    text-align: left;
+    padding: 15px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.payroll-row {
+    background: white;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.payroll-row:hover {
+    transform: scale(1.01);
+}
+
+.payroll-row td {
+    padding: 15px;
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.payroll-row td:first-child { border-left: 1px solid #f1f5f9; border-radius: 10px 0 0 10px; }
+.payroll-row td:last-child { border-right: 1px solid #f1f5f9; border-radius: 0 10px 10px 0; }
+
+.payslip-btn {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.payslip-btn:hover {
+    background: #e2e8f0;
+}

@@ -1,5 +1,6 @@
 // applyleave.js
 import { useState, useEffect } from "react";
+import "./ApplyLeave.css";
 
 function ApplyLeave() {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ function ApplyLeave() {
     reason: "",
   });
   const [balance, setBalance] = useState(null);
+
   useEffect(() => {
     const employeeId = localStorage.getItem("employee_id");
   
@@ -51,7 +53,6 @@ function ApplyLeave() {
   
       alert(data.message);
   
-      // Reset form but keep employee_id for future use
       setFormData({
         ...formData,
         leave_type: "",
@@ -59,9 +60,6 @@ function ApplyLeave() {
         end_date: "",
         reason: ""
       });
-  
-      // ✅ Optional: update leave request table immediately
-      // fetchLeaveRequests(); // Function not defined, removed to fix "success then error" bug
     } catch (err) {
       console.error(err);
       alert("Error applying leave");
@@ -69,44 +67,58 @@ function ApplyLeave() {
   };
 
   return (
-    <div style={{ marginTop: "30px" }}>
-      <h2>Apply Leave</h2>
+    <div className="apply-leave-container">
+      <h2 className="apply-leave-title">Apply Leave</h2>
       {balance && (
-  <div style={{ marginBottom: "15px", padding: "10px", background: "#eef" }}>
-    <b>Total Leaves:</b> {balance.total_leaves} |
-    <b> Used:</b> {balance.used_leaves} |
-    <b> Remaining:</b> {balance.remaining_leaves}
-  </div>
-   )}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="employee_id"
-          placeholder="Employee ID"
-          value={formData.employee_id}
-          readOnly
-          style={{ backgroundColor: "#eee" }}
-        />
+        <div className="leave-message message-success" style={{ marginBottom: "20px" }}>
+          <b>Total Leaves:</b> {balance.total_leaves} |
+          <b> Used:</b> {balance.used_leaves} |
+          <b> Remaining:</b> {balance.remaining_leaves}
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="leave-form-grid">
+        <div style={{ gridColumn: "span 2" }}>
+           <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>Employee ID</label>
+           <input
+            type="text"
+            name="employee_id"
+            className="leave-input"
+            value={formData.employee_id}
+            readOnly
+            style={{ backgroundColor: "#f8fafc" }}
+          />
+        </div>
 
-        <select name="leave_type" value={formData.leave_type} onChange={handleChange}>
-          <option value="">Select Leave Type</option>
-          <option value="Sick">Sick Leave</option>
-          <option value="Casual">Casual Leave</option>
-          <option value="Annual">Annual Leave</option>
-        </select>
+        <div>
+          <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>Leave Type</label>
+          <select name="leave_type" className="leave-select" value={formData.leave_type} onChange={handleChange}>
+            <option value="">Select Leave Type</option>
+            <option value="Sick">Sick Leave</option>
+            <option value="Casual">Casual Leave</option>
+            <option value="Annual">Annual Leave</option>
+          </select>
+        </div>
 
-        <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} />
-        <input type="date" name="end_date" value={formData.end_date} onChange={handleChange} />
+        <div>&nbsp;</div>
 
-        <input
-          type="text"
+        <div>
+           <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>Start Date</label>
+           <input type="date" name="start_date" className="leave-input" value={formData.start_date} onChange={handleChange} />
+        </div>
+        <div>
+           <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>End Date</label>
+           <input type="date" name="end_date" className="leave-input" value={formData.end_date} onChange={handleChange} />
+        </div>
+
+        <textarea
           name="reason"
-          placeholder="Reason"
+          placeholder="Reason for leave..."
+          className="leave-textarea"
           value={formData.reason}
           onChange={handleChange}
         />
 
-        <button type="submit">Apply Leave</button>
+        <button type="submit" className="leave-button">Apply Leave</button>
       </form>
     </div>
   );
