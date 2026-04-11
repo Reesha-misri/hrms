@@ -103,8 +103,8 @@ function MyAttendance() {
                   history.map((record) => (
                     <tr key={record.attendance_id}>
                       <td>{new Date(record.attendance_date).toLocaleDateString()}</td>
-                      <td>{record.check_in ? new Date(record.check_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-"}</td>
-                      <td>{record.check_out ? new Date(record.check_out).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-"}</td>
+                      <td>{record.check_in && record.attendance_date ? new Date(`${record.attendance_date.split('T')[0]}T${record.check_in}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-"}</td>
+                      <td>{record.check_out && record.attendance_date ? new Date(`${record.attendance_date.split('T')[0]}T${record.check_out}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-"}</td>
                       <td>
                         <span className={`status-badge ${record.status === 'Present' ? 'status-present' : 'status-absent'}`}>
                           {record.status}

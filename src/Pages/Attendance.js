@@ -63,8 +63,16 @@ function Attendance(){
                     <div style={{ fontWeight: "600", color: "#1e293b" }}>{a.full_name}</div>
                     <div style={{ fontSize: "12px", color: "#64748b" }}>ID: {a.employee_id}</div>
                   </td>
-                  <td>{a.check_in ? new Date(a.check_in).toLocaleTimeString() : "-"}</td>
-                  <td>{a.check_out ? new Date(a.check_out).toLocaleTimeString() : "-"}</td>
+                  <td>
+                    {a.check_in && a.attendance_date 
+                      ? new Date(`${a.attendance_date.split('T')[0]}T${a.check_in}`).toLocaleTimeString() 
+                      : "-"}
+                  </td>
+                  <td>
+                    {a.check_out && a.attendance_date 
+                      ? new Date(`${a.attendance_date.split('T')[0]}T${a.check_out}`).toLocaleTimeString() 
+                      : "-"}
+                  </td>
                   <td>
                     {a.attendance_date
                       ? new Date(a.attendance_date).toLocaleDateString()
