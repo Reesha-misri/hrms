@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_URL from "../api";
 import "./AuditLogs.css";
 
 function AuditLogs() {
@@ -9,7 +10,7 @@ function AuditLogs() {
   },[]);
 
   const fetchLogs = async () => {
-    const res = await fetch("http://localhost:3001/audit-logs");
+    const res = await fetch(`${API_URL}/audit-logs`);
     const data = await res.json();
     setLogs(data);
   };

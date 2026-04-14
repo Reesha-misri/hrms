@@ -9,8 +9,11 @@ import Profile from "./Pages/Profile";
 import MyAttendance from "./Pages/MyAttendance";
 import AuditLogs from "./Pages/AuditLogs";
 import ForgotPassword from "./Pages/ForgotPassword";
+import Dashboard from "./Pages/Dashboard";
 import "./App.css";
 import { LayoutDashboard, Users, Calendar, FileText, LogOut, Plus, X } from "lucide-react";
+import API_URL from "./api";
+
 
 function App() {
   const navigate = useNavigate();
@@ -41,10 +44,10 @@ function App() {
   const [newRole, setNewRole] = useState("");
   const [isFormVisible, setIsFormVisible] = useState(false);
 
-  // Role & permissions from localStorage
-  const role = localStorage.getItem("role");
-  const employeeId = localStorage.getItem("employee_id");
-  const permissions = JSON.parse(localStorage.getItem("permissions") || "[]");
+  // Role & permissions from sessionStorage
+  const role = sessionStorage.getItem("role");
+  const employeeId = sessionStorage.getItem("employee_id");
+  const permissions = JSON.parse(sessionStorage.getItem("permissions") || "[]");
 
   // Derived permissions
   const canManageEmployees = permissions.some(p => p.permission_name === "Manage Employees");
@@ -56,19 +59,19 @@ function App() {
 
   // Fetch functions
   const fetchEmployees = useCallback(async () => {
-    const res = await fetch(`http://localhost:3001/employees?role=${role}&employee_id=${employeeId}`);
+    const res = await fetch(`${API_URL}/employees?role=${role}&employee_id=${employeeId}`);
     const data = await res.json();
     setEmployees(data);
   }, [role, employeeId]);
 
   const fetchDesignations = useCallback(async () => {
-    const res = await fetch("http://localhost:3001/designations");
+    const res = await fetch(`${API_URL}/designations`);
     const data = await res.json();
     setDesignations(data);
   }, []);
 
   const fetchRoles = useCallback(async () => {
-    const res = await fetch("http://localhost:3001/roles");
+    const res = await fetch(`${API_URL}/roles`);
     const data = await res.json();
     setRoles(data);
   }, []);
@@ -76,7 +79,7 @@ function App() {
   const fetchLeaveRequests = useCallback(async () => {
     if (!employeeId) return;
     try {
-      const res = await fetch(`http://localhost:3001/leave-requests/${employeeId}`);
+      const res = await fetch(`${API_URL}/leave-requests/${employeeId}`);
       const data = await res.json();
       setLeaveRequests(data);
     } catch (err) {
@@ -91,7 +94,7 @@ function App() {
       fetchRoles();
       fetchLeaveRequests();
 
-      fetch(`http://localhost:3001/leave-balance/${employeeId}`)
+      fetch(`${API_URL}/leave-balance/${employeeId}`)
         .then(res => res.json())
         .then(data => setLeaveBalance(data))
         .catch(err => console.error(err));
@@ -152,7 +155,7 @@ function App() {
 
       // Add new designation if needed
       if (showNewDesignation && newDesignation) {
-        const dRes = await fetch("http://localhost:3001/add-designation", {
+        const dRes = await fetch(`${API_URL}/add-designation`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ designation_title: newDesignation })
@@ -163,7 +166,7 @@ function App() {
 
       // Add new role if needed
       if (showNewRole && newRole) {
-        const rRes = await fetch("http://localhost:3001/add-role", {
+        const rRes = await fetch(`${API_URL}/add-role`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ role_name: newRole })
@@ -174,13 +177,13 @@ function App() {
 
       let res;
       if (editId) {
-        res = await fetch(`http://localhost:3001/update-employee/${editId}`, {
+        res = await fetch(`${API_URL}/update-employee/${editId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(finalFormData)
         });
       } else {
-        res = await fetch("http://localhost:3001/add-employee", {
+        res = await fetch(`${API_URL}/add-employee`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(finalFormData)
@@ -224,7 +227,7 @@ function App() {
 
   const deleteEmployee = async (id) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
-      await fetch(`http://localhost:3001/delete-employee/${id}`, { method: "DELETE" });
+      await fetch(`${API_URL}/delete-employee/${id}`, { method: "DELETE" });
       fetchEmployees();
     }
   };
@@ -244,7 +247,8 @@ function App() {
       {/* Sidebar - ORIGINAL DESIGN */}
       <div className="sidebar">
         <h2>HRMS</h2>
-        <NavLink to="/profile"><LayoutDashboard size={16}/> Profile</NavLink>
+        <NavLink to="/dashboard"><LayoutDashboard size={16}/> Dashboard</NavLink>
+        <NavLink to="/profile"><Users size={16}/> Profile</NavLink>
         <NavLink to="/myattendance"><Calendar size={16}/> Attendance</NavLink>
         <NavLink to="/audit-logs"><FileText size={16}/> Audit</NavLink>
 
@@ -264,7 +268,7 @@ function App() {
         <button
           className="logout-btn"
           onClick={() => {
-            localStorage.clear();
+            sessionStorage.clear();
             window.location.href = "/";
           }}
         >
@@ -376,6 +380,7 @@ function App() {
           } />
 
           <Route path="/profile" element={<Profile />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/myattendance" element={<MyAttendance />} />
           <Route path="/audit-logs" element={<AuditLogs />} />
           <Route path="/leave-requests" element={canApproveLeave ? <LeaveApproval /> : <Navigate to="/profile" />} />

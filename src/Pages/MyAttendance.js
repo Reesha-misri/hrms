@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
+import API_URL from "../api";
 import "./MyAttendance.css";
 import { Clock, Calendar, Filter, CheckCircle, XCircle } from "lucide-react";
 
 function MyAttendance() {
-  const employee_id = localStorage.getItem("employee_id");
-  const role = localStorage.getItem("role");
+  const employee_id = sessionStorage.getItem("employee_id");
+  const role = sessionStorage.getItem("role");
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState([]);
-  const [filterDate, setFilterDate] = useState("");
+  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
 
   const fetchHistory = async () => {
     try {
-      let url = `http://localhost:3001/attendance?role=Employee&employee_id=${employee_id}`;
+      let url = `${API_URL}/attendance?role=Employee&employee_id=${employee_id}`;
       if (filterDate) {
         url += `&date=${filterDate}`;
       }
@@ -28,7 +29,7 @@ function MyAttendance() {
   }, [employee_id]);
 
   const checkIn = async () => {
-    const res = await fetch("http://localhost:3001/checkin", {
+    const res = await fetch(`${API_URL}/checkin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ employee_id })
@@ -39,7 +40,7 @@ function MyAttendance() {
   };
 
   const checkOut = async () => {
-    const res = await fetch(`http://localhost:3001/checkout/${employee_id}`, {
+    const res = await fetch(`${API_URL}/checkout/${employee_id}`, {
       method: "PUT"
     });
     const data = await res.text();

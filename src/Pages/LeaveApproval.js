@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
+import API_URL from "../api";
 import "./LeaveApproval.css";
 
 function LeaveApproval(){
   const [leaves,setLeaves] = useState([]);
-  const loggedInEmployeeId = localStorage.getItem("employee_id");
+  const loggedInEmployeeId = sessionStorage.getItem("employee_id");
 
   const fetchLeaves = async () => {
-    const res = await fetch("http://localhost:3001/leaves");
+    const res = await fetch(`${API_URL}/leaves`);
     const data = await res.json();
     setLeaves(data);
   };
@@ -16,7 +17,7 @@ function LeaveApproval(){
   }, []);
 
   const approveLeave = async(id)=>{
-    await fetch(`http://localhost:3001/approve-leave/${id}`,{
+    await fetch(`${API_URL}/approve-leave/${id}`,{
       method:"PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ approver_id: loggedInEmployeeId })
@@ -25,7 +26,7 @@ function LeaveApproval(){
   };
 
   const rejectLeave = async(id)=>{
-    await fetch(`http://localhost:3001/reject-leave/${id}`,{
+    await fetch(`${API_URL}/reject-leave/${id}`,{
       method:"PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ approver_id: loggedInEmployeeId })

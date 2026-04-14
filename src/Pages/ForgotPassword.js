@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_URL from "../api";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import "./ForgotPassword.css";
@@ -27,7 +28,7 @@ function ForgotPassword() {
     }
 
     try {
-      const res = await fetch("http://localhost:3001/forgot-password", {
+      const res = await fetch(`${API_URL}/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, newPassword }),

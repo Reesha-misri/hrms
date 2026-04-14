@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
+import API_URL from "../api";
 import "./Attendance.css";
 
 function Attendance(){
   const [attendance,setAttendance] = useState([]);
-  const [date,setDate] = useState("");
+  const [date,setDate] = useState(new Date().toISOString().split('T')[0]);
   const [title, setTitle] = useState("Attendance");
 
   const fetchAttendance = async () => {
-    const role = localStorage.getItem("role");
-    const employee_id = localStorage.getItem("employee_id");
+    const role = sessionStorage.getItem("role");
+    const employee_id = sessionStorage.getItem("employee_id");
     setTitle(role === "Manager" ? "Team Attendance" : "Company Attendance");
     
-    let url = `http://localhost:3001/attendance?role=${role}&employee_id=${employee_id}`;
+    let url = `${API_URL}/attendance?role=${role}&employee_id=${employee_id}`;
     if(date){
       url += `&date=${date}`;
     }
@@ -42,7 +43,7 @@ function Attendance(){
             </button>
           </div>
         </div>
-
+        
         <div className="payroll-table-container">
           <table className="attendance-table">
             <thead>

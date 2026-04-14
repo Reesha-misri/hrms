@@ -1,10 +1,11 @@
 // applyleave.js
 import { useState, useEffect } from "react";
+import API_URL from "../api";
 import "./ApplyLeave.css";
 
 function ApplyLeave() {
   const [formData, setFormData] = useState({
-    employee_id: localStorage.getItem("employee_id"),
+    employee_id: sessionStorage.getItem("employee_id"),
     leave_type: "",
     start_date: "",
     end_date: "",
@@ -13,9 +14,9 @@ function ApplyLeave() {
   const [balance, setBalance] = useState(null);
 
   useEffect(() => {
-    const employeeId = localStorage.getItem("employee_id");
+    const employeeId = sessionStorage.getItem("employee_id");
   
-    fetch(`http://localhost:3001/leave-balance/${employeeId}`)
+    fetch(`${API_URL}/leave-balance/${employeeId}`)
       .then(res => res.json())
       .then(data => setBalance(data))
       .catch(err => console.error(err));
@@ -34,7 +35,7 @@ function ApplyLeave() {
     }
   
     try {
-      const res = await fetch("http://localhost:3001/apply-leave", {
+      const res = await fetch(`${API_URL}/apply-leave`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

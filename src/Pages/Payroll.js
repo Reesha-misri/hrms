@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_URL from "../api";
 import "./Payroll.css";
 
 function Payroll({ canGenerate }){
@@ -7,11 +8,11 @@ function Payroll({ canGenerate }){
   const [message,setMessage] = useState("");
   const [payroll,setPayroll] = useState([]);
 
-  const role = localStorage.getItem("role");
-  const loggedInEmpId = localStorage.getItem("employee_id");
+  const role = sessionStorage.getItem("role");
+  const loggedInEmpId = sessionStorage.getItem("employee_id");
 
   const generatePayroll = async () => {
-    const res = await fetch("http://localhost:3001/generate-payroll",{
+    const res = await fetch(`${API_URL}/generate-payroll`,{
       method:"POST",
       headers:{
         "Content-Type":"application/json"
@@ -28,7 +29,7 @@ function Payroll({ canGenerate }){
   };
 
   const fetchPayroll = async ()=>{
-    const res = await fetch(`http://localhost:3001/payroll?role=${role}&employee_id=${loggedInEmpId}`);
+    const res = await fetch(`${API_URL}/payroll?role=${role}&employee_id=${loggedInEmpId}`);
     const data = await res.json();
     setPayroll(data);
   };

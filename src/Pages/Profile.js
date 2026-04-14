@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_URL from "../api";
 import "./Profile.css";
 import { User, Mail, Briefcase, Shield, UserCheck, MapPin, CreditCard } from "lucide-react";
 
@@ -6,9 +7,9 @@ function Profile() {
   const [employee, setEmployee] = useState({});
 
   useEffect(() => {
-    const employee_id = localStorage.getItem("employee_id");
+    const employee_id = sessionStorage.getItem("employee_id");
   
-    fetch(`http://localhost:3001/employee/${employee_id}`)
+    fetch(`${API_URL}/employee/${employee_id}`)
       .then(res => res.json())
       .then(data => setEmployee(data))
       .catch(err => console.error("Error fetching profile:", err));

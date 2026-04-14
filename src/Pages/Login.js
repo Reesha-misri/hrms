@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Login.css";
 import { Eye, EyeOff } from "lucide-react";
+import API_URL from "../api";
+
 
 function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState("");
@@ -20,7 +22,7 @@ function Login({ onLoginSuccess }) {
     }
 
     try {
-      const res = await fetch("http://localhost:3001/login", {
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -35,9 +37,9 @@ function Login({ onLoginSuccess }) {
       const data = await res.json();
 
       // Save login data
-localStorage.setItem("role", data.role);
-localStorage.setItem("employee_id", data.employee_id);
-localStorage.setItem("permissions", JSON.stringify(data.permissions));
+sessionStorage.setItem("role", data.role);
+sessionStorage.setItem("employee_id", data.employee_id);
+sessionStorage.setItem("permissions", JSON.stringify(data.permissions));
 
       // data should include: { role, employee_id, permissions: [{permission_name: "..."}, ...] }
       window.location.reload();
