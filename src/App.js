@@ -52,10 +52,11 @@ function App() {
   // Derived permissions
   const canManageEmployees = permissions.some(p => p.permission_name === "Manage Employees");
   const canApproveLeave = permissions.some(p => p.permission_name === "Approve Leave");
-  const canViewPayroll = permissions.some(p => p.permission_name === "View Payroll") || role === "HR" || role === "Admin";
-  const canGeneratePayroll = permissions.some(p => p.permission_name === "Generate Payroll") || role === "HR" || role === "Admin";
+  const canViewPayroll = permissions.some(p => p.permission_name === "View Payroll") || role === "HR Manager" || role === "Admin";
+  const canGeneratePayroll = permissions.some(p => p.permission_name === "Generate Payroll") || role === "HR Manager" || role === "Admin";
   const canApplyLeave = permissions.some(p => p.permission_name === "Apply Leave");
-  const canViewAttendance = permissions.some(p => p.permission_name === "View Attendance") || role === "Manager" || role === "HR" || role === "Admin";
+  const canViewAttendance = permissions.some(p => p.permission_name === "View Attendance") || role === "Manager" || role === "HR Manager" || role === "Admin";
+  const canViewDashboard = role === "HR Manager" || role === "Admin";
 
   // Fetch functions
   const fetchEmployees = useCallback(async () => {
@@ -247,7 +248,7 @@ function App() {
       {/* Sidebar - ORIGINAL DESIGN */}
       <div className="sidebar">
         <h2>HRMS</h2>
-        <NavLink to="/dashboard"><LayoutDashboard size={16}/> Dashboard</NavLink>
+        {canViewDashboard && <NavLink to="/dashboard"><LayoutDashboard size={16}/> Dashboard</NavLink>}
         <NavLink to="/profile"><Users size={16}/> Profile</NavLink>
         <NavLink to="/myattendance"><Calendar size={16}/> Attendance</NavLink>
         <NavLink to="/audit-logs"><FileText size={16}/> Audit</NavLink>
@@ -380,7 +381,7 @@ function App() {
           } />
 
           <Route path="/profile" element={<Profile />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={canViewDashboard ? <Dashboard /> : <Navigate to="/profile" />} />
           <Route path="/myattendance" element={<MyAttendance />} />
           <Route path="/audit-logs" element={<AuditLogs />} />
           <Route path="/leave-requests" element={canApproveLeave ? <LeaveApproval /> : <Navigate to="/profile" />} />

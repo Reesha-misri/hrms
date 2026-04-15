@@ -4,7 +4,7 @@ import "./Attendance.css";
 
 function Attendance(){
   const [attendance,setAttendance] = useState([]);
-  const [date,setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date,setDate] = useState(new Date().toLocaleDateString('en-CA'));
   const [title, setTitle] = useState("Attendance");
 
   const fetchAttendance = async () => {
@@ -24,7 +24,7 @@ function Attendance(){
 
   useEffect(()=>{
     fetchAttendance();
-  },[]);
+  },[date]);
 
   return(
     <div className="attendance-container">

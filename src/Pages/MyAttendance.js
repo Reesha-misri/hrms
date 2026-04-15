@@ -8,7 +8,7 @@ function MyAttendance() {
   const role = sessionStorage.getItem("role");
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState([]);
-  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
+  const [filterDate, setFilterDate] = useState(new Date().toLocaleDateString('en-CA'));
 
   const fetchHistory = async () => {
     try {
@@ -26,13 +26,14 @@ function MyAttendance() {
 
   useEffect(() => {
     fetchHistory();
-  }, [employee_id]);
+  }, [employee_id, filterDate]);
 
   const checkIn = async () => {
+    const today = new Date().toLocaleDateString('en-CA');
     const res = await fetch(`${API_URL}/checkin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ employee_id })
+      body: JSON.stringify({ employee_id, date: today })
     });
     const data = await res.text();
     setMessage(data);
@@ -40,8 +41,11 @@ function MyAttendance() {
   };
 
   const checkOut = async () => {
+    const today = new Date().toLocaleDateString('en-CA');
     const res = await fetch(`${API_URL}/checkout/${employee_id}`, {
-      method: "PUT"
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date: today })
     });
     const data = await res.text();
     setMessage(data);

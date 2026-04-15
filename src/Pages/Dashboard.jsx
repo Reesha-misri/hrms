@@ -31,7 +31,8 @@ const Dashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await axios.get("http://localhost:3001/api/dashboard/stats");
+      const today = new Date().toLocaleDateString('en-CA');
+      const res = await axios.get(`http://localhost:3001/api/dashboard/stats?date=${today}`);
       setData(res.data);
       setLoading(false);
     } catch (err) {
