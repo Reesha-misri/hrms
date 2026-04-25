@@ -6,9 +6,40 @@
 /* Sidebar */
 .sidebar {
   width: 230px;
-  background: #1e293b;
+  background: #000000; /* Black from image */
   color: white;
   padding: 20px;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar.closed {
+  width: 0;
+  padding: 0;
+  opacity: 0;
+}
+
+.mobile-close-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.hamburger-btn {
+  display: block;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #ffffff;
+}
+
+.sidebar-overlay {
+  display: none;
 }
 
 .sidebar h2 {
@@ -20,19 +51,19 @@
   align-items: center;
   gap: 10px;
   padding: 10px;
-  color: #cbd5e1;
+  color: #ffffff;
   text-decoration: none;
   border-radius: 6px;
   margin-bottom: 5px;
 }
 
 .sidebar a.active {
-  background: #3b82f6;
+  background: #e12228; /* Red from image */
   color: white;
 }
 
 .sidebar a:hover {
-  background: #334155;
+  background: #1a1a1a;
 }
 
 /* Logout */
@@ -40,7 +71,7 @@
   margin-top: 20px;
   width: 100%;
   padding: 10px;
-  background: #ef4444;
+  background: #e12228;
   color: white;
   border: none;
   border-radius: 6px;
@@ -51,24 +82,29 @@
 .main-content {
   flex: 1;
   padding: 20px;
-  background: #f1f5f9;
+  background: #111111;
+  color: #ffffff;
   overflow-y: auto;
 }
 
 /* Top bar */
 .topbar {
-  background: white;
+  background: #000000;
+  color: #ffffff;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
   font-weight: bold;
+  border: 1px solid #333;
 }
 
 /* Card */
 .card {
-  background: white;
+  background: #000000;
+  color: #ffffff;
   padding: 20px;
   border-radius: 10px;
+  border: 1px solid #333;
 }
 
 /* Form */
@@ -82,14 +118,16 @@
 .form-grid select,
 .form-grid textarea {
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #333;
   border-radius: 6px;
+  background: #111111;
+  color: #ffffff;
 }
 
 /* Button */
 .primary-btn {
   padding: 12px;
-  background: #3b82f6;
+  background: #e12228;
   color: white;
   border: none;
   border-radius: 6px;
@@ -113,11 +151,12 @@
   width: 100%;
   margin-top: 20px;
   border-collapse: collapse;
-  background: white;
+  background: #000000;
+  color: #ffffff;
 }
 
 .table th {
-  background: #3b82f6;
+  background: #e12228;
   color: white;
   padding: 10px;
   text-align: left;
@@ -125,11 +164,11 @@
 
 .table td {
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #333;
 }
 
 .table tr:hover {
-  background: #f9fafb;
+  background: #1a1a1a;
 }
 
 /* Actions in table */
@@ -144,11 +183,112 @@
 }
 
 .edit-btn {
-  background: #007bff;
-  color: white;
+  background: #f1b821; /* Yellow from image */
+  color: black;
 }
 
 .delete-btn {
-  background: #dc3545;
+  background: #e12228; /* Red from image */
   color: white;
+}
+/* Form Group with Label */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Labels */
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #aaaaaa;
+}
+
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #111111;
+  color: #ffffff;
+}
+
+
+.full-width {
+  grid-column: span 3;
+}
+
+
+.salary-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  grid-column: span 3;
+}
+
+
+.sub-input {
+  margin-top: 5px;
+  border: 1px dashed #444;
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .app-container {
+    position: relative;
+    overflow-x: hidden;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 230px;
+    padding: 20px;
+    opacity: 1;
+    transform: translateX(-100%);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .sidebar.closed {
+    transform: translateX(-100%);
+  }
+  .mobile-close-btn {
+    display: block;
+  }
+  .hamburger-btn {
+    display: block;
+  }
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .salary-group {
+    grid-template-columns: 1fr;
+    grid-column: span 1;
+  }
+  .full-width {
+    grid-column: span 1;
+  }
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }

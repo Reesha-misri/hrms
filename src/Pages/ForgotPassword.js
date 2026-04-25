@@ -50,20 +50,20 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="login-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f1f5f9" }}>
+    <div className="login-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
       <div className="forgot-password-card">
         <Link to="/" className="back-link">
           <ArrowLeft size={16} /> Back to Login
         </Link>
-        <h2 className="login-title" style={{ marginBottom: "10px", fontSize: "24px", color: "#1e293b" }}>Reset Password</h2>
-        <p style={{ color: "#64748b", fontSize: "14px", marginBottom: "30px" }}>Enter your email and new password</p>
+        <h2 className="login-title" style={{ marginBottom: "10px", fontSize: "24px", color: "#ffffff" }}>Reset Password</h2>
+        <p style={{ color: "#aaa", fontSize: "14px", marginBottom: "30px" }}>Enter your email and new password</p>
 
         {error && <div className="leave-message message-error" style={{ marginBottom: "20px" }}>{error}</div>}
         {message && <div className="leave-message message-success" style={{ marginBottom: "20px" }}>{message}</div>}
 
         <form onSubmit={handleReset}>
           <div style={{ marginBottom: "16px" }}>
-            <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>Email Address</label>
+            <label style={{ fontSize: "12px", color: "#aaa", marginBottom: "4px", display: "block" }}>Email Address</label>
             <input
               type="email"
               placeholder="name@company.com"
@@ -73,7 +73,7 @@ function ForgotPassword() {
             />
           </div>
           <div style={{ marginBottom: "16px" }}>
-            <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>New Password</label>
+            <label style={{ fontSize: "12px", color: "#aaa", marginBottom: "4px", display: "block" }}>New Password</label>
             <input
               type="password"
               placeholder="••••••••"
@@ -83,7 +83,7 @@ function ForgotPassword() {
             />
           </div>
           <div style={{ marginBottom: "24px" }}>
-            <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>Confirm New Password</label>
+            <label style={{ fontSize: "12px", color: "#aaa", marginBottom: "4px", display: "block" }}>Confirm New Password</label>
             <input
               type="password"
               placeholder="••••••••"

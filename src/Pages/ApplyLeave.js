@@ -79,19 +79,19 @@ function ApplyLeave() {
       )}
       <form onSubmit={handleSubmit} className="leave-form-grid">
         <div style={{ gridColumn: "span 2" }}>
-           <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>Employee ID</label>
+           <label style={{ fontSize: "12px", color: "#aaaaaa", marginBottom: "4px", display: "block" }}>Employee ID</label>
            <input
             type="text"
             name="employee_id"
             className="leave-input"
             value={formData.employee_id}
             readOnly
-            style={{ backgroundColor: "#f8fafc" }}
+            style={{ backgroundColor: "#1a1a1a" }}
           />
         </div>
 
         <div>
-          <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>Leave Type</label>
+          <label style={{ fontSize: "12px", color: "#aaaaaa", marginBottom: "4px", display: "block" }}>Leave Type</label>
           <select name="leave_type" className="leave-select" value={formData.leave_type} onChange={handleChange}>
             <option value="">Select Leave Type</option>
             <option value="Sick">Sick Leave</option>
@@ -103,11 +103,11 @@ function ApplyLeave() {
         <div>&nbsp;</div>
 
         <div>
-           <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>Start Date</label>
+           <label style={{ fontSize: "12px", color: "#aaaaaa", marginBottom: "4px", display: "block" }}>Start Date</label>
            <input type="date" name="start_date" className="leave-input" value={formData.start_date} onChange={handleChange} />
         </div>
         <div>
-           <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px", display: "block" }}>End Date</label>
+           <label style={{ fontSize: "12px", color: "#aaaaaa", marginBottom: "4px", display: "block" }}>End Date</label>
            <input type="date" name="end_date" className="leave-input" value={formData.end_date} onChange={handleChange} />
         </div>
 

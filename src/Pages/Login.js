@@ -87,7 +87,7 @@ sessionStorage.setItem("permissions", JSON.stringify(data.permissions));
         </button>
       </form>
       <div className="login-footer">
-        <Link to="/forgot-password" style={{ color: "#007bff", textDecoration: "none", fontSize: "14px" }}>Forgot Password?</Link>
+        <Link to="/forgot-password" style={{ color: "#f1b821", textDecoration: "none", fontSize: "14px" }}>Forgot Password?</Link>
       </div>
     </div>
   </div>

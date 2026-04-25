@@ -1,16 +1,18 @@
 .profile-container {
   padding: 20px;
-  background: #f1f5f9;
+  background: #111111;
   min-height: 100vh;
 }
 
 .profile-card {
-  background: white;
+  background: #000000;
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(225, 34, 40, 0.3), 0 2px 4px -1px rgba(225, 34, 40, 0.1);
   padding: 40px;
   max-width: 900px;
   margin: 0 auto;
+  border: 1px solid #333;
+  color: #ffffff;
 }
 
 .profile-header {
@@ -19,13 +21,13 @@
   gap: 30px;
   margin-bottom: 40px;
   padding-bottom: 30px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #333;
 }
 
 .profile-avatar {
   width: 100px;
   height: 100px;
-  background: #3b82f6;
+  background: #e12228;
   color: white;
   font-size: 2.5rem;
   font-weight: 700;
@@ -33,18 +35,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 10px 15px -3px rgba(225, 34, 40, 0.3);
 }
 
 .profile-main-info h1 {
   margin: 0;
   font-size: 2rem;
-  color: #1e293b;
+  color: #ffffff;
 }
 
 .subtitle {
   margin: 5px 0 0;
-  color: #64748b;
+  color: #aaaaaa;
   font-weight: 500;
   font-size: 1.1rem;
 }
@@ -56,23 +58,23 @@
 }
 
 .profile-section {
-  background: #f8fafc;
+  background: #1a1a1a;
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #333;
 }
 
 .section-title {
   margin: 0 0 15px;
   font-size: 1rem;
-  color: #334155;
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 8px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #cbd5e1;
+  border-bottom: 1px solid #444;
   padding-bottom: 10px;
 }
 
@@ -86,27 +88,27 @@
   display: block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: #aaaaaa;
   text-transform: uppercase;
   margin-bottom: 4px;
 }
 
 .detail-item div {
   font-size: 0.95rem;
-  color: #1e293b;
+  color: #ffffff;
   font-weight: 500;
 }
 
 .currency {
   font-family: 'Courier New', Courier, monospace;
   font-weight: 700 !important;
-  color: #059669 !important;
+  color: #9dc43a !important;
 }
 
 .currency.total {
   font-size: 1.2rem !important;
-  color: #1e293b !important;
-  background: #ecfdf5;
+  color: #ffffff !important;
+  background: #e12228;
   padding: 5px 10px;
   border-radius: 4px;
   display: inline-block;

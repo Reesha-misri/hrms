@@ -6,19 +6,21 @@
 }
 
 .payroll-card {
-    background: white;
+    background: #000000;
     border-radius: 16px;
     padding: 32px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(225, 34, 40, 0.2);
     margin-bottom: 30px;
+    border: 1px solid #333;
+    color: #ffffff;
 }
 
 .payroll-title {
     font-size: 24px;
     font-weight: 700;
-    color: #334155;
+    color: #ffffff;
     margin-bottom: 24px;
-    border-left: 4px solid #3b82f6;
+    border-left: 4px solid #e12228;
     padding-left: 15px;
 }
 
@@ -33,21 +35,22 @@
     flex: 1;
     min-width: 200px;
     padding: 12px 16px;
-    border: 2px solid #f1f5f9;
+    border: 2px solid #333;
     border-radius: 10px;
-    background: #f8fafc;
+    background: #111111;
+    color: #ffffff;
     transition: all 0.3s;
 }
 
 .payroll-input:focus {
-    border-color: #3b82f6;
-    background: white;
+    border-color: #e12228;
+    background: #1a1a1a;
     outline: none;
 }
 
 .payroll-btn {
     padding: 12px 24px;
-    background: #3b82f6;
+    background: #e12228;
     color: white;
     border: none;
     border-radius: 10px;
@@ -57,8 +60,8 @@
 }
 
 .payroll-btn:hover {
-    background: #2563eb;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    background: #b0171d;
+    box-shadow: 0 4px 12px rgba(225, 34, 40, 0.3);
 }
 
 .payroll-table-container {
@@ -75,14 +78,15 @@
 .payroll-table th {
     text-align: left;
     padding: 15px;
-    color: #64748b;
+    color: #aaaaaa;
     font-weight: 600;
 }
 
 .payroll-row {
-    background: white;
+    background: #111111;
+    color: #ffffff;
     transition: transform 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 5px rgba(225, 34, 40, 0.1);
 }
 
 .payroll-row:hover {
@@ -91,18 +95,18 @@
 
 .payroll-row td {
     padding: 15px;
-    border-top: 1px solid #f1f5f9;
-    border-bottom: 1px solid #f1f5f9;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
 }
 
-.payroll-row td:first-child { border-left: 1px solid #f1f5f9; border-radius: 10px 0 0 10px; }
-.payroll-row td:last-child { border-right: 1px solid #f1f5f9; border-radius: 0 10px 10px 0; }
+.payroll-row td:first-child { border-left: 1px solid #333; border-radius: 10px 0 0 10px; }
+.payroll-row td:last-child { border-right: 1px solid #333; border-radius: 0 10px 10px 0; }
 
 .payslip-btn {
     padding: 8px 16px;
-    background: #f1f5f9;
-    color: #475569;
-    border: none;
+    background: #1a1a1a;
+    color: #f1b821;
+    border: 1px solid #333;
     border-radius: 6px;
     font-size: 13px;
     font-weight: 500;
@@ -110,5 +114,5 @@
 }
 
 .payslip-btn:hover {
-    background: #e2e8f0;
+    background: #333333;
 }

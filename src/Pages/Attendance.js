@@ -61,8 +61,8 @@ function Attendance(){
                 <tr key={a.attendance_id}>
                   <td>{a.attendance_id}</td>
                   <td>
-                    <div style={{ fontWeight: "600", color: "#1e293b" }}>{a.full_name}</div>
-                    <div style={{ fontSize: "12px", color: "#64748b" }}>ID: {a.employee_id}</div>
+                    <div style={{ fontWeight: "600", color: "#ffffff" }}>{a.full_name}</div>
+                    <div style={{ fontSize: "12px", color: "#aaaaaa" }}>ID: {a.employee_id}</div>
                   </td>
                   <td>
                     {a.check_in && a.attendance_date 

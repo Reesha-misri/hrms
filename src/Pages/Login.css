@@ -4,18 +4,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: url('./tech_background.png') no-repeat center center / cover;
   font-family: Arial, sans-serif;
 }
 
 /* Card */
 .login-card {
-  background: #fff;
+  background: #000000;
+  color: #ffffff;
   padding: 30px;
   border-radius: 12px;
   width: 350px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(225, 34, 40, 0.3); /* Red glow */
   text-align: center;
+  border: 1px solid #333;
 }
 
 /* Title */
@@ -26,7 +28,7 @@
 /* Subtitle */
 .login-subtitle {
   margin-bottom: 20px;
-  color: #666;
+  color: #aaa;
   font-size: 14px;
 }
 
@@ -36,7 +38,9 @@
   padding: 10px;
   margin-bottom: 15px;
   border-radius: 6px;
-  border: 1px solid #ddd;
+  border: 1px solid #444;
+  background: #111;
+  color: #fff;
   outline: none;
   font-size: 14px;
 }
@@ -46,7 +50,7 @@
   padding: 12px;
   border-radius: 6px;
   border: none;
-  background: #667eea;
+  background: #e12228;
   color: #fff;
   font-size: 16px;
   cursor: pointer;
@@ -54,7 +58,7 @@
 }
 
 .login-button:hover {
-  background: #5a67d8;
+  background: #b0171d;
 }
 
 /* Error */

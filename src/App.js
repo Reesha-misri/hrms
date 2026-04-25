@@ -11,7 +11,7 @@ import AuditLogs from "./Pages/AuditLogs";
 import ForgotPassword from "./Pages/ForgotPassword";
 import Dashboard from "./Pages/Dashboard";
 import "./App.css";
-import { LayoutDashboard, Users, Calendar, FileText, LogOut, Plus, X } from "lucide-react";
+import { LayoutDashboard, Users, Calendar, FileText, LogOut, Plus, X, Menu } from "lucide-react";
 import API_URL from "./api";
 
 
@@ -43,6 +43,8 @@ function App() {
   const [newDesignation, setNewDesignation] = useState("");
   const [newRole, setNewRole] = useState("");
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   // Role & permissions from sessionStorage
   const role = sessionStorage.getItem("role");
@@ -245,26 +247,29 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Sidebar - ORIGINAL DESIGN */}
-      <div className="sidebar">
-        <h2>HRMS</h2>
-        {canViewDashboard && <NavLink to="/dashboard"><LayoutDashboard size={16}/> Dashboard</NavLink>}
-        <NavLink to="/profile"><Users size={16}/> Profile</NavLink>
-        <NavLink to="/myattendance"><Calendar size={16}/> Attendance</NavLink>
-        <NavLink to="/audit-logs"><FileText size={16}/> Audit</NavLink>
+      {isSidebarOpen && window.innerWidth <= 768 && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
 
-        {canApproveLeave && <NavLink to="/leave-requests">Leave Requests</NavLink>}
-        {canApplyLeave && <NavLink to="/apply-leave">Apply Leave</NavLink>}
+      <div className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+          <h2 style={{ margin: 0 }}>HRMS</h2>
+          <button className="mobile-close-btn" onClick={toggleSidebar}><X size={20}/></button>
+        </div>
+        {canViewDashboard && <NavLink to="/dashboard" onClick={() => setIsSidebarOpen(false)}><LayoutDashboard size={16}/> Dashboard</NavLink>}
+        <NavLink to="/profile" onClick={() => setIsSidebarOpen(false)}><Users size={16}/> Profile</NavLink>
+        <NavLink to="/myattendance" onClick={() => setIsSidebarOpen(false)}><Calendar size={16}/> Attendance</NavLink>
+        {role === "Admin" && ( <NavLink to="/audit-logs" onClick={() => setIsSidebarOpen(false)}> <FileText size={16}/> Audit </NavLink> )}
+        {canApproveLeave && <NavLink to="/leave-requests" onClick={() => setIsSidebarOpen(false)}>Leave Requests</NavLink>}
+        {canApplyLeave && <NavLink to="/apply-leave" onClick={() => setIsSidebarOpen(false)}>Apply Leave</NavLink>}
         
         {/* ATTENDANCE FOR MANAGERS/HR/ADMIN */}
         {(role === "Manager" || role === "HR" || role === "Admin") && (
-          <NavLink to="/attendance">
+          <NavLink to="/attendance" onClick={() => setIsSidebarOpen(false)}>
             <Users size={16}/> {role === "Manager" ? "Team Attendance" : "All Attendance"}
           </NavLink>
         )}
 
-        {canViewPayroll && <NavLink to="/payroll">Payroll</NavLink>}
-        {canManageEmployees && <NavLink to="/employees"><Users size={16}/> Employees</NavLink>}
+        {canViewPayroll && <NavLink to="/payroll" onClick={() => setIsSidebarOpen(false)}>Payroll</NavLink>}
+        {canManageEmployees && <NavLink to="/employees" onClick={() => setIsSidebarOpen(false)}><Users size={16}/> Employees</NavLink>}
 
         <button
           className="logout-btn"
@@ -278,7 +283,8 @@ function App() {
       </div>
 
       <div className="main-content">
-        <div className="topbar">
+        <div className="topbar" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <button className="hamburger-btn" onClick={toggleSidebar}><Menu size={20}/></button>
           Welcome, {role} 👋
         </div>
 
@@ -298,48 +304,77 @@ function App() {
                 <div className={`form-container ${isFormVisible ? "" : "hidden"}`}>
                   <h3>{editId ? "Update Employee" : "Add New Employee"}</h3>
                   <form className="form-grid" onSubmit={handleSubmit}>
-                    <input name="employee_id" placeholder="Employee ID" value={formData.employee_id} onChange={handleChange} readOnly={!!editId} />
-                    <input name="full_name" placeholder="Full Name" value={formData.full_name} onChange={handleChange} />
-                    <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
-                    <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
-                    <input name="department_name" placeholder="Department" value={formData.department_name} onChange={handleChange} />
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                      <select name="designation_id" value={formData.designation_id} onChange={handleChange}>
-                        <option value="">Designation</option>
-                        {designations.map(d => <option key={d.designation_id} value={d.designation_id}>{d.designation_title}</option>)}
-                        <option value="ADD_NEW">+ Add New Designation</option>
-                      </select>
-                      {showNewDesignation && (
-                        <input placeholder="New Designation Name" value={newDesignation} onChange={(e) => setNewDesignation(e.target.value)} />
-                      )}
+                    <div className="form-group">
+                    <label>Employee ID</label>
+                    <input name="employee_id" value={formData.employee_id} onChange={handleChange} readOnly={!!editId} />
+                    </div>                    
+                    <div className="form-group">
+                    <label>Full Name</label>
+                    <input name="full_name" placeholder="Enter full name" value={formData.full_name} onChange={handleChange} />
+                    </div>      
+                    <div className="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} />
                     </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                      <select name="role_id" value={formData.role_id} onChange={handleChange}>
-                        <option value="">Role</option>
-                        {roles.map(r => <option key={r.role_id} value={r.role_id}>{r.role_name}</option>)}
-                        <option value="ADD_NEW">+ Add New Role</option>
-                      </select>
-                      {showNewRole && (
-                        <input placeholder="New Role Name" value={newRole} onChange={(e) => setNewRole(e.target.value)} />
-                      )}
+                    <div className="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" value={formData.password} onChange={handleChange} />
+                    </div>                    
+                    <div className="form-group">
+                    <label>Department</label>
+                    <input name="department_name" value={formData.department_name} onChange={handleChange} />
                     </div>
-
-                    <select name="manager_id" value={formData.manager_id} onChange={handleChange}>
-                      <option value="">Manager</option>
-                      {employees.filter(e => e.role_name === "Manager").map(m => (
-                        <option key={m.employee_id} value={m.employee_id}>{m.full_name}</option>
-                      ))}
+                    <div className="form-group">
+                    <label>Designation</label>
+                    <select name="designation_id" value={formData.designation_id} onChange={handleChange} >
+                    <option value="">Select Designation</option>
+                    {designations.map((d) => (
+                    <option key={d.designation_id} value={d.designation_id}> {d.designation_title} </option>))}
+                    <option value="ADD_NEW">+ Add New Designation</option>
                     </select>
-
-                    <input type="text" name="basic" placeholder="Basic" value={formData.basic} onChange={handleChange} />
-                    <input type="text" name="allowance" placeholder="Allowance" value={formData.allowance} onChange={handleChange} />
-                    <input type="text" name="deduction" placeholder="Deduction" value={formData.deduction} onChange={handleChange} />
-
-                    <textarea name="communication_address" placeholder="Communication Address" value={formData.communication_address} onChange={handleChange} style={{ gridColumn: "span 3" }}></textarea>
-                    <textarea name="permanent_address" placeholder="Permanent Address" value={formData.permanent_address} onChange={handleChange} style={{ gridColumn: "span 3" }}></textarea>
-
+                    {showNewDesignation && (
+                    <input className="sub-input" placeholder="Enter new designation" value={newDesignation} onChange={(e) => setNewDesignation(e.target.value)}/>
+                    )}</div>
+                    <div className="form-group">
+                    <label>Role</label>
+                    <select name="role_id" value={formData.role_id} onChange={handleChange}>
+                    <option value="">Select Role</option>
+                    {roles.map((r) => ( <option key={r.role_id} value={r.role_id}> {r.role_name} </option>))}
+                    <option value="ADD_NEW">+ Add New Role</option>
+                    </select>
+                    {showNewRole && (
+                    <input className="sub-input" placeholder="Enter new role" value={newRole} onChange={(e) => setNewRole(e.target.value)}/>
+                    )}</div>
+                    <div className="form-group">
+                    <label>Manager</label>
+                    <select name="manager_id" value={formData.manager_id} onChange={handleChange} >
+                    <option value="">Select Manager</option>
+                    {employees .filter(e => e.role_name === "Manager") .map(m => (
+                    <option key={m.employee_id} value={m.employee_id}> {m.full_name} </option>))}
+                    </select>
+                    </div>
+                    <div className="salary-group">
+                    <div className="form-group">
+                    <label>Basic Salary</label>
+                    <input type="text" name="basic" value={formData.basic} onChange={handleChange}/>
+                    </div>
+                    <div className="form-group">
+                    <label>Allowance</label>
+                    <input type="text" name="allowance" value={formData.allowance} onChange={handleChange}/>
+                    </div>
+                    <div className="form-group">
+                    <label>Deduction</label>
+                    <input type="text" name="deduction" value={formData.deduction} onChange={handleChange}/>
+                    </div>
+                    </div>
+                    <div className="form-group full-width">
+                    <label>Communication Address</label>
+                    <textarea name="communication_address" value={formData.communication_address} onChange={handleChange}/>
+                    </div>
+                    <div className="form-group full-width">
+                    <label>Permanent Address</label>
+                    <textarea name="permanent_address" value={formData.permanent_address} onChange={handleChange}/>
+                    </div>
                     <div style={{ gridColumn: "span 3", display: "flex", gap: "10px" }}>
                       <button type="submit" className="primary-btn" style={{ flex: 1 }}>
                         {editId ? "Update Employee" : "Save Employee"}

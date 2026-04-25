@@ -9,6 +9,7 @@ import {
   ResponsiveContainer, BarChart, Bar, Cell, PieChart as RePieChart, Pie
 } from "recharts";
 import "./Dashboard.css";
+import API_URL from "../api";
 
 const Dashboard = () => {
   const [data, setData] = useState({
@@ -32,7 +33,7 @@ const Dashboard = () => {
   const fetchStats = async () => {
     try {
       const today = new Date().toLocaleDateString('en-CA');
-      const res = await axios.get(`http://localhost:3001/api/dashboard/stats?date=${today}`);
+      const res = await axios.get(`${API_URL}/dashboard/stats?date=${today}`);
       setData(res.data);
       setLoading(false);
     } catch (err) {

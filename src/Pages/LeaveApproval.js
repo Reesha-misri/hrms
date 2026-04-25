@@ -53,20 +53,20 @@ function LeaveApproval(){
               {leaves.map((l)=>(
                 <tr key={l.leave_id}>
                   <td>
-                    <div style={{ fontWeight: "600", color: "#1e293b" }}>{l.full_name}</div>
-                    <div style={{ fontSize: "12px", color: "#64748b" }}>ID: {l.employee_id}</div>
+                    <div style={{ fontWeight: "600", color: "#ffffff" }}>{l.full_name}</div>
+                    <div style={{ fontSize: "12px", color: "#aaaaaa" }}>ID: {l.employee_id}</div>
                   </td>
                   <td>
-                    <span style={{ padding: "4px 8px", background: "#f1f5f9", borderRadius: "4px", fontSize: "13px" }}>
+                    <span style={{ padding: "4px 8px", background: "#1a1a1a", color: "#ffffff", borderRadius: "4px", fontSize: "13px", border: "1px solid #333" }}>
                       {l.leave_type}
                     </span>
                   </td>
                   <td>
                     <div style={{ fontSize: "14px" }}>{new Date(l.start_date).toLocaleDateString()}</div>
-                    <div style={{ color: "#94a3b8", fontSize: "12px" }}>to {new Date(l.end_date).toLocaleDateString()}</div>
+                    <div style={{ color: "#aaaaaa", fontSize: "12px" }}>to {new Date(l.end_date).toLocaleDateString()}</div>
                   </td>
                   <td>
-                    <span className={`status-badge ${l.status === 'Approved' ? 'status-present' : l.status === 'Rejected' ? 'status-absent' : 'status-present'}`} style={{ background: l.status === 'Pending' ? '#fef9c3' : '', color: l.status === 'Pending' ? '#854d0e' : '' }}>
+                    <span className={`status-badge ${l.status === 'Approved' ? 'status-present' : l.status === 'Rejected' ? 'status-absent' : 'status-present'}`} style={{ background: l.status === 'Pending' ? '#f1b821' : '', color: l.status === 'Pending' ? '#000000' : '' }}>
                       {l.status}
                     </span>
                   </td>
@@ -77,7 +77,7 @@ function LeaveApproval(){
                         <button className="reject-btn" onClick={() => rejectLeave(l.leave_id)}>Reject</button>
                       </div>
                     ) : (
-                      <span style={{ color: "#94a3b8", fontSize: "13px" }}>None</span>
+                      <span style={{ color: "#aaaaaa", fontSize: "13px" }}>None</span>
                     )}
                   </td>
                 </tr>
